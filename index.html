@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Baccha</title>
+    <style>
+        /* --- CSS STYLING --- */
+        body {
+            background-color: #fce4ec;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            color: #d81b60;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        #app {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .section {
+            display: none;
+            text-align: center;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 90%;
+            max-width: 400px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 50;
+        }
+
+        .section.active { display: flex; animation: fadeIn 0.8s; }
+        .hidden { display: none !important; }
+
+        /* Ice Breaking Area */
+        .full-screen-touch {
+            width: 100vw;
+            height: 40vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: crosshair;
+            z-index: 100;
+        }
+
+        .ice-container { font-size: 6rem; position: relative; pointer-events: none; }
+
+        .slash {
+            position: absolute;
+            width: 120vw;
+            height: 10px;
+            background: white;
+            box-shadow: 0 0 25px #e1f5fe;
+            top: 50%;
+            left: -150%;
+            transform: rotate(-30deg);
+            display: none;
+            z-index: 110;
+        }
+
+        .animate-slash { display: block; animation: sliceThrough 0.4s ease-out forwards; }
+        @keyframes sliceThrough { 0% { left: -150%; } 100% { left: 150%; } }
+
+        .burst-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+            z-index: 120;
+        }
+
+        .burst-animation { display: block !important; animation: burstPop 0.6s ease-out forwards; }
+        @keyframes burstPop {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            50% { transform: translate(-50%, -50%) scale(1.5); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1.2); opacity: 0; }
+        }
+
+        /* Gallery Card */
+        .photo-container { 
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            position: relative;
+        }
+
+        .photo {
+            width: 260px;
+            height: 320px;
+            padding: 25px;
+            background: white;
+            border: 10px solid white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #555;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        /* Peace Dove Animation */
+        .dove {
+            position: absolute;
+            font-size: 2.5rem;
+            bottom: 10%;
+            z-index: 10;
+            animation: flyAcross 6s linear infinite;
+        }
+
+        @keyframes flyAcross {
+            0% { left: -20%; bottom: 10%; transform: scaleX(1); }
+            50% { left: 50%; bottom: 20%; transform: scaleX(1); }
+            100% { left: 120%; bottom: 10%; transform: scaleX(1); }
+        }
+
+        /* Swinging Heart Effect */
+        .heart {
+            position: fixed;
+            font-size: 1.5rem;
+            color: white;
+            pointer-events: none;
+            z-index: 1000;
+            animation: riseUp 4s ease-in forwards;
+        }
+
+        /* This handles the rising and the swinging separately */
+        @keyframes riseUp {
+            0% { bottom: -50px; opacity: 1; margin-left: 0; }
+            25% { margin-left: 30px; }
+            50% { margin-left: -30px; }
+            75% { margin-left: 30px; }
+            100% { bottom: 100vh; opacity: 0; margin-left: 0; }
+        }
+
+        /* Message Card */
+        .message-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(216, 27, 96, 0.1);
+            line-height: 1.6;
+            z-index: 60;
+        }
+
+        button {
+            background-color: #f06292;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            margin-top: 15px;
+            transition: 0.3s;
+            z-index: 200;
+        }
+
+        button:hover { background-color: #d81b60; transform: scale(1.05); }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div id="countdown" class="section active">
+            <h1 id="count-display">3</h1>
+        </div>
+
+        <div id="loading" class="section">
+            <div class="hello-kitty">✨🤍</div>
+            <p>Your CRESCENT is waiting...</p>
+        </div>
+
+        <div id="intro" class="section">
+            <div class="hello-kitty">🧸</div>
+            <h2>Hey, My Baccha...</h2>
+            <p>I know I've been rude lately. I made this because I hate it when we aren't okay.</p>
+            <button onclick="nextSection('apology-section')">Click to hear me out</button>
+        </div>
+
+        <div id="apology-section" class="section">
+            <h3 id="instruction-text">Swipe to break the ice between us...</h3>
+            <div class="full-screen-touch" onmousedown="breakIce()" ontouchstart="breakIce()">
+                <div class="ice-container">
+                    <div id="ice-emoji" class="character">❄️💎</div>
+                    <div id="slash" class="slash"></div>
+                    <div id="burst" class="burst-container hidden">✨🤍☁️🌸</div>
+                </div>
+            </div>
+            
+            <div id="celebration" class="hidden">
+                <h2>I am truly sorry, My Baccha.</h2>
+                <p>Let's start fresh?</p>
+                <button onclick="nextSection('gallery')">Click for a reminder</button>
+            </div>
+        </div>
+
+        <div id="gallery" class="section">
+            <div id="peace-dove" class="dove hidden">🕊️</div>
+            <h3>For My Favorite Person</h3>
+            <div class="photo-container">
+                <div id="photo-display" class="photo">🤍 I hate fighting with you.</div>
+            </div>
+            <div class="gallery-controls">
+                <button id="next-photo-btn" onclick="changePhoto()">Next Message</button>
+                <button id="final-msg-btn" class="hidden" onclick="nextSection('message')">Open My Heart</button>
+            </div>
+        </div>
+
+        <div id="message" class="section">
+            <div class="message-card">
+                <h3>To: My Baccha</h3>
+                <p>I’m so sorry for my behavior. I was wrong to be rude to you. You are the best sister, and Your CRESCENT misses his happy Baccha. Please forgive me? I promise to be better. 🤍🌷</p>
+                <div style="font-size: 2rem; margin-top: 15px;">🤝🤍🕊️</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* --- JAVASCRIPT LOGIC --- */
+        function nextSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            const target = document.getElementById(id);
+            if(target) target.classList.add('active');
+            
+            // Start the bird when reaching gallery
+            if(id === 'gallery') {
+                document.getElementById('peace-dove').classList.remove('hidden');
+            }
+        }
+
+        // Countdown
+        let timer = 3;
+        const countdownInterval = setInterval(() => {
+            timer--;
+            if (timer > 0) {
+                document.getElementById('count-display').innerText = timer;
+            } else {
+                clearInterval(countdownInterval);
+                nextSection('loading');
+                setTimeout(() => nextSection('intro'), 2500);
+            }
+        }, 1000);
+
+        // Ice Breaking Logic
+        let isBroken = false;
+        function breakIce() {
+            if (isBroken) return; 
+            isBroken = true;
+
+            const slash = document.getElementById('slash');
+            const burst = document.getElementById('burst');
+            const ice = document.getElementById('ice-emoji');
+            const celebration = document.getElementById('celebration');
+            const instruction = document.getElementById('instruction-text');
+
+            slash.classList.add('animate-slash');
+            instruction.style.opacity = "0";
+
+            setTimeout(() => {
+                burst.classList.remove('hidden');
+                burst.classList.add('burst-animation');
+                ice.innerHTML = "🌸🤍"; 
+                spawnSwingingHearts(); // Burst of swinging hearts
+            }, 150);
+
+            setTimeout(() => {
+                celebration.classList.remove('hidden');
+            }, 700);
+        }
+
+        // Gallery Messages
+        const photos = [
+            "🤍 I hate fighting with you.",
+            "✨ You're my favorite person in the house.",
+            "🧸 Your CRESCENT really misses you.",
+            "🌷 Please forgive me, Baccha?"
+        ];
+        let currentPhotoIndex = 0;
+
+        function changePhoto() {
+            currentPhotoIndex++;
+            const photoDisplay = document.getElementById('photo-display');
+            spawnSwingingHearts(); // Swing hearts on each click
+            
+            if (currentPhotoIndex < photos.length) {
+                photoDisplay.style.opacity = "0";
+                setTimeout(() => {
+                    photoDisplay.innerText = photos[currentPhotoIndex];
+                    photoDisplay.style.opacity = "1";
+                }, 200);
+            } 
+            
+            if (currentPhotoIndex === photos.length - 1) {
+                document.getElementById('next-photo-btn').classList.add('hidden');
+                document.getElementById('final-msg-btn').classList.remove('hidden');
+            }
+        }
+
+        // Function for Swinging White Hearts
+        function spawnSwingingHearts() {
+            for (let i = 0; i < 8; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.innerText = '🤍';
+                heart.style.left = Math.random() * 100 + 'vw';
+                // Vary speed and swing a bit
+                const duration = (Math.random() * 2 + 3) + 's';
+                heart.style.animationDuration = duration;
+                document.body.appendChild(heart);
+                
+                // Cleanup
+                setTimeout(() => heart.remove(), 4000);
+            }
+        }
+    </script>
+</body>
+</html>
